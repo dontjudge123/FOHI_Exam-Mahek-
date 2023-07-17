@@ -1,0 +1,30 @@
+from fastapi import FastAPI
+from pydicom import dcmread
+import os
+
+app = FastAPI()
+
+dicom_files = "C:\Users\Hp\OneDrive\Desktop\Dicom Files"
+
+@app.get('/api/patient/{patient_id}')
+def get_patient_images(patient_id: str):
+    images = []
+
+    for root, _, files in os.walk(dicom_files):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_file = os.path.join(root, file)
+                ds = dcmread(dicom_file)
+
+            
+                if ds.PatientID == patient_id:
+                    image_info = {
+                        'file': file,
+                        'path': dicom_file,
+                        'patient_id': ds.PatientID,
+                        'date': ds.StudyDate,
+                        'age': ds.PatientAge
+                    }
+                    images.append(image_info)
+
+    return {'patient_id': patient_id, 'images': images}

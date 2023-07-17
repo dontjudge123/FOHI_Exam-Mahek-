@@ -1,0 +1,35 @@
+from fastapi import FastAPI
+import pydicom
+import os
+
+app = FastAPI()
+
+@app.get('/api')
+def dicom_metadata():
+    metadata = []
+
+    dicom_files = 'C:\Users\Hp\OneDrive\Desktop\Dicom Files'
+
+    for root, dirs, files in os.walk(dicom_files):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_file = os.path.join(root, file)
+                ds = pydicom.dcmread(dicom_file)
+
+                # Extract metadata
+                patient_id = ds.PatientID
+                date = ds.StudyDate
+                age = ds.PatientAge
+                image_link = os.path.relpath(dicom_file, start=dicom_files)
+
+                # Create a metadata dictionary
+                metadata_item = {
+                    'PatientID': patient_id,
+                    'Date': date,
+                    'Age': age,
+                    'ImageLink': image_link
+                }
+
+                metadata.append(metadata_item)
+
+    return {'metadata': metadata}

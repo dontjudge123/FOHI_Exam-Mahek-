@@ -1,0 +1,9 @@
+To make DICOM metadata interoperable using FHIR:
+
+Use FHIR APIs to expose DICOM metadata in a standardized way.
+Utilize the FHIR ImagingStudy resource to represent imaging studies, including DICOM-specific metadata.
+Consider using custom FHIR extensions to capture additional DICOM-specific metadata.
+Leverage DICOMWeb, a RESTful web API standard, for FHIR-compatible access and retrieval of DICOM data.
+Map DICOM metadata to FHIR resources using libraries like fhir.resources and pydicom.
+Consider using DICOMWeb client libraries to facilitate integration between DICOM and FHIR.
+These approaches enable interoperability, allowing other systems to interact with DICOM data using FHIR resources and operations

@@ -1,0 +1,7 @@
+Cues that i found in both image names and metadta to help solve this problem are:
+
+Search for patterns in the picture names, such as patient IDs, timestamps, imaging modalities, or indicators of body parts.
+Look for patient details, research information (description, date, time), and series information in the DICOM headers' metadata (description, modality).
+Verify that the patient-related information is consistent throughout the photos.
+Take attention to imaging characteristics including picture orientation and slice thickness.
+We can acquire vital information to help with data management and guarantee precise diagnosis by looking at both picture names and metadata.

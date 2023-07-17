@@ -1,0 +1,29 @@
+from pydicom import dcmread
+import os
+
+
+dicom_files = "C:\Users\Hp\OneDrive\Desktop\Dicom Files"
+
+def check_image_name_mismatch():
+    mismatched_images = []
+
+    for root, _, files in os.walk(dicom_files):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_file = os.path.join(root, file)
+                ds = dcmread(dicom_file)
+
+                # Compare image name with DICOM metadata
+                if file != ds.SOPInstanceUID + '.dcm':
+                    mismatched_images.append(file)
+
+    return mismatched_images
+
+# Usage
+mismatched_names = check_image_name_mismatch()
+print("Image names that do not match their metadata:")
+for image_name in mismatched_names:
+    print(image_name)
+
+#if the image name does not match the expected pattern of <SOPInstanceUID>.dcm, it is considered a mismatch
+#To avoid this problem in the future, we can establish a consistent naming convention for the DICOM files that aligns with the information present in the DICOM metadata, such as using the SOPInstanceUID as part of the image name. This can help ensure that the image names and metadata remain consistent and aligned.

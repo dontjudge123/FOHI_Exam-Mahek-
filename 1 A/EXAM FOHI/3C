@@ -1,0 +1,37 @@
+from pydicom import dcmread
+import os
+
+dicom_files ="C:\Users\Hp\OneDrive\Desktop\Dicom Files"
+
+def fix_image_names():
+    fixed_images = []
+
+    for root, _, files in os.walk(dicom_files):
+        for file in files:
+            if file.endswith('.dcm'):
+                dicom_file = os.path.join(root, file)
+                ds = dcmread(dicom_file)
+
+              # Sir I assume code snippet assumes that the SOP Instance UID is a suitable identifier for constructing the correct image name.
+                expected_name = ds.SOPInstanceUID + '.dcm'
+
+                #comparison
+                if file = expected_name:
+                    # Rename the image file
+                    new_path = os.path.join(root, expected_name)
+                    os.rename(dicom_file, new_path)
+
+                    # Fixing
+                    fix_info = {
+                        'original_name': file,
+                        'new_name': expected_name
+                    }
+                    fixed_images.append(fix_info)
+
+    return fixed_images
+
+# Usage
+fixed_names = fix_image_names()
+print("Image names that were fixed:")
+for fix_info in fixed_names:
+    print(f"Original Name: {fix_info['original_name']}, New Name: {fix_info['new_name']}")

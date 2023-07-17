@@ -1,0 +1,53 @@
+from fastapi import FastAPI
+import pydicom
+from pydicom.data import get_testdata_files
+from PIL import Image
+import io
+import base64
+from starlette.responses import HTMLResponse
+
+app = FastAPI()
+
+@app.get('/patient/{patient_id}')
+def patient_images(patient_id: str):
+    html = "<html><body>"
+    html += f"<h1>Patient {patient_id} Images</h1>"
+    html += "<table>"
+
+    dicom_files = "C:\Users\Hp\OneDrive\Desktop\Dicom Files"
+
+    for i, dicom_file in enumerate(dicom_files):
+        ds = pydicom.dcmread(dicom_file)
+
+        # Check if the patient ID matches
+        if ds.PatientID == patient_id:
+            # Extract metadata
+            date = ds.StudyDate
+            age = ds.PatientAge
+
+            # Convert age to human-readable format (e.g., years)
+            age_years = int(age[:-1])
+            age_readable = f"{age_years} years"
+
+            # Convert DICOM image to PIL Image
+            dicom_image = ds.pixel_array
+            image = Image.fromarray(dicom_image)
+
+            # Resize image for display
+            image.thumbnail((200, 200))
+
+            # Convert PIL Image to base64 string
+            image_buffer = io.BytesIO()
+            image.save(image_buffer, format="PNG")
+            image_str = base64.b64encode(image_buffer.getvalue()).decode("utf-8")
+
+            # Generate HTML for image and metadata
+            html += f"<tr><td><img src='data:image/png;base64,{image_str}'></td>"
+            html += f"<td>Date: {date}<br>Age: {age_readable}</td></tr>"
+
+            # Break table rows every 4 images
+            if (i + 1) % 4 == 0:
+                html += "</tr><tr>"
+
+    html += "</table></body></html>"
+    return HTMLResponse(content=html, media_type="text/html")
